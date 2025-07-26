@@ -1,3 +1,36 @@
-<h1 class="text-3xl font-bold underline">
-  Hello world!
-</h1>
+<div class="bg-gray-50 min-h-screen">
+  <!-- Cabeçalho -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <h1 class="text-2xl font-bold text-gray-900">Lista de Preços</h1>
+      <p class="text-gray-600 text-sm mt-1">
+        Preencha os preços e gere seu relatório
+      </p>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="max-w-4xl mx-auto px-4 py-6">
+    <!-- Seção do Formulário -->
+    <section *ngIf="telaAtual === 'formulario'" class="animate-fade-in">
+      <app-formulario-precos (relatorioGerado)="onRelatorioGerado($event)">
+      </app-formulario-precos>
+    </section>
+
+    <!-- Seção do Relatório -->
+    <section
+      *ngIf="telaAtual === 'relatorio' && relatorioAtual"
+      class="animate-fade-in"
+    >
+      <app-visualizador-relatorio
+        [relatorio]="relatorioAtual"
+        (voltarClicado)="voltarParaFormulario()"
+      >
+      </app-visualizador-relatorio>
+    </section>
+  </main>
+
+  <!-- Componente de Loading -->
+  <app-loading [visivel]="carregando" [mensagem]="mensagemCarregamento">
+  </app-loading>
+</div>

@@ -1,0 +1,95 @@
+<div class="animate-fade-in bg-slate-50 min-h-screen p-4 sm:p-6 lg:p-8">
+  <div class="max-w-5xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 text-slate-800">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">{{ relatorio.titulo }}</h2>
+        <p class="text-slate-500">
+          {{ relatorioService.formatarData(relatorio.data) }}
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          *ngFor="let produto of relatorio.produtos"
+          class="bg-white border border-slate-200 rounded-xl p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+        >
+          <div class="flex justify-between items-start">
+            <h3 class="font-semibold text-base text-slate-700 w-2/3">{{ produto.nome }}</h3>
+            <span class="text-xl font-bold text-slate-900 text-right">
+              {{ relatorioService.formatarPreco(produto.preco) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="mt-10 pt-8 border-t border-slate-200"
+        *ngIf="mostrarEstatisticas"
+      >
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          <div class="bg-slate-100 rounded-xl p-4">
+            <div class="text-sm font-medium text-slate-500 uppercase tracking-wider">Total de Itens</div>
+            <div class="text-2xl font-bold text-slate-900 mt-1">{{ relatorio.produtos.length }}</div>
+          </div>
+          <div class="bg-slate-100 rounded-xl p-4">
+            <div class="text-sm font-medium text-slate-500 uppercase tracking-wider">Valor Total</div>
+            <div class="text-2xl font-bold text-slate-900 mt-1">
+              {{ relatorioService.formatarPreco(estatisticas.total) }}
+            </div>
+          </div>
+          <div class="bg-slate-100 rounded-xl p-4">
+            <div class="text-sm font-medium text-slate-500 uppercase tracking-wider">Preço Médio</div>
+            <div class="text-2xl font-bold text-slate-900 mt-1">
+              {{ relatorioService.formatarPreco(estatisticas.media) }}
+            </div>
+          </div>
+          <div class="bg-slate-100 rounded-xl p-4">
+            <div class="text-sm font-medium text-slate-500 uppercase tracking-wider">Maior Preço</div>
+            <div class="text-2xl font-bold text-slate-900 mt-1">
+              {{ relatorioService.formatarPreco(estatisticas.maiorPreco) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4 mt-8">
+      <button
+        (click)="compartilhar()"
+        [disabled]="compartilhando"
+        class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 flex items-center justify-center"
+      >
+        <span *ngIf="!compartilhando" class="flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M13 4.5a2.5 2.5 0 11.702 4.281l-4.243 2.121a2.503 2.503 0 010 2.196l4.243 2.121a2.5 2.5 0 11-.702.702l-4.243-2.121a2.5 2.5 0 110-3.6l4.243-2.121A2.5 2.5 0 0113 4.5z"></path>
+          </svg>
+          Compartilhar
+        </span>
+        <span *ngIf="compartilhando" class="flex items-center">
+          <svg class="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24">
+             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Compartilhando...
+        </span>
+      </button>
+
+      <button
+        (click)="toggleEstatisticas()"
+        class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-6 rounded-lg transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+      >
+        {{ mostrarEstatisticas ? "Ocultar" : "Mostrar" }} Estatísticas
+      </button>
+
+      <button
+        (click)="voltar()"
+        class="flex-1 bg-transparent hover:bg-slate-100 text-slate-600 font-bold py-3 px-6 rounded-lg border border-slate-300 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 flex items-center justify-center"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Voltar
+      </button>
+    </div>
+  </div>
+</div>
