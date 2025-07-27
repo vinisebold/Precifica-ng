@@ -19,8 +19,13 @@
     </h2>
     <div class="space-y-4">
       @for (produto of constantes.PRODUTOS; track produto) {
+      <!-- O [ngClass] foi adicionado a este div -->
       <div
-        class="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100 transition-opacity duration-200"
+        class="flex items-center justify-between p-4 rounded-lg border transition-colors duration-300"
+        [ngClass]="{
+          'bg-amber-50/50 border-amber-100': !precos[produto],
+          'bg-gray-50/50 border-gray-100': precos[produto]
+        }"
       >
         <label
           [for]="'preco-' + constantes.gerarIdProduto(produto)"
