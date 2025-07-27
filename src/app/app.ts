@@ -19,7 +19,8 @@ export class App {
   public relatorioAtual: Relatorio | null = null;
   public carregando: boolean = false;
   public mensagemCarregamento: string = 'Processando...';
-  public categoriasSelecionadas: { [categoria: string]: boolean } = {};
+  // REMOVIDO: A propriedade 'categoriasSelecionadas' não é mais necessária.
+  // public categoriasSelecionadas: { [categoria: string]: boolean } = {};
 
   constructor(private relatorioService: RelatorioService) {}
 
@@ -67,12 +68,10 @@ export class App {
     this.relatorioAtual = null;
   }
 
-  /**
-   * Recebe as categorias selecionadas do formulário
-   */
-  public onCategoriasSelecionadasChange(categorias: { [categoria: string]: boolean }) {
-    this.categoriasSelecionadas = { ...categorias };
-  }
+  // REMOVIDO: O método 'onCategoriasSelecionadasChange' não é mais utilizado.
+  // public onCategoriasSelecionadasChange(categorias: { [categoria: string]: boolean }) {
+  //   this.categoriasSelecionadas = { ...categorias };
+  // }
 
   /**
    * Mostra o indicador de carregamento
@@ -93,6 +92,7 @@ export class App {
    * Mostra um alerta para o usuário
    */
   private mostrarAlerta(mensagem: string): void {
+    // NOTA: Em uma aplicação real, seria melhor usar um componente de modal/toast.
     alert(mensagem);
   }
 

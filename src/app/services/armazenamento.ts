@@ -3,10 +3,9 @@ import { DadosLista } from '../models/dados-lista';
 import { ConstantesService } from './constantes';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ArmazenamentoService {
-
   constructor(private constantes: ConstantesService) {}
 
   /**
@@ -16,14 +15,14 @@ export class ArmazenamentoService {
     try {
       const dadosParaSalvar: DadosLista = {
         ...dados,
-        ultimaAtualizacao: new Date().toISOString()
+        ultimaAtualizacao: new Date().toISOString(),
       };
-      
+
       localStorage.setItem(
-        this.constantes.CHAVE_ARMAZENAMENTO, 
+        this.constantes.CHAVE_ARMAZENAMENTO,
         JSON.stringify(dadosParaSalvar)
       );
-      
+
       return true;
     } catch (erro) {
       console.error('Erro ao salvar no localStorage:', erro);
@@ -38,10 +37,20 @@ export class ArmazenamentoService {
     try {
       const dados = localStorage.getItem(this.constantes.CHAVE_ARMAZENAMENTO);
       if (!dados) return null;
-      
+
       const parsed = JSON.parse(dados);
-      if (!parsed || typeof parsed !== 'object' || !parsed.titulo || !parsed.precos) {
-        console.warn('Dados inválidos no localStorage');
+
+      if (
+        !parsed ||
+        typeof parsed !== 'object' ||
+        typeof parsed.titulo !== 'string' ||
+        typeof parsed.precos !== 'object' ||
+        parsed.precos === null
+      ) {
+        console.warn(
+          'Dados inválidos no localStorage. A estrutura não corresponde ao esperado.'
+        );
+        this.limpar();
         return null;
       }
       return parsed as DadosLista;
@@ -57,7 +66,6 @@ export class ArmazenamentoService {
   public limpar(): boolean {
     try {
       localStorage.removeItem(this.constantes.CHAVE_ARMAZENAMENTO);
-      localStorage.removeItem(this.constantes.CHAVE_CATEGORIAS_SELECIONADAS || 'categoriasSelecionadas');
       return true;
     } catch (erro) {
       console.error('Erro ao limpar localStorage:', erro);
@@ -70,39 +78,5 @@ export class ArmazenamentoService {
    */
   public existemDados(): boolean {
     return localStorage.getItem(this.constantes.CHAVE_ARMAZENAMENTO) !== null;
-  }
-
-  /**
-   * Salva categorias selecionadas no localStorage
-   */
-  public salvarCategoriasSelecionadas(categoriasSelecionadas: { [categoria: string]: boolean }): void {
-    try {
-      localStorage.setItem(
-        this.constantes.CHAVE_CATEGORIAS_SELECIONADAS || 'categoriasSelecionadas',
-        JSON.stringify(categoriasSelecionadas)
-      );
-    } catch (erro) {
-      console.error('Erro ao salvar categorias selecionadas:', erro);
-    }
-  }
-
-  /**
-   * Carrega categorias selecionadas do localStorage
-   */
-  public carregarCategoriasSelecionadas(): { [categoria: string]: boolean } | null {
-    try {
-      const data = localStorage.getItem(this.constantes.CHAVE_CATEGORIAS_SELECIONADAS || 'categoriasSelecionadas');
-      if (!data) return null;
-      
-      const parsed = JSON.parse(data);
-      if (!parsed || typeof parsed !== 'object') {
-        console.warn('Categorias selecionadas inválidas no localStorage');
-        return null;
-      }
-      return parsed as { [categoria: string]: boolean };
-    } catch (erro) {
-      console.error('Erro ao carregar categorias selecionadas:', erro);
-      return null;
-    }
   }
 }

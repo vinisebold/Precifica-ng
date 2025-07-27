@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Relatorio } from '../../models/relatorio';
+import { Relatorio, ProdutoComPreco } from '../../models/relatorio';
 import { RelatorioService } from '../../services/relatorio';
 import { CompartilhamentoService } from '../../services/compartilhamento';
 import { ConstantesService } from '../../services/constantes';
@@ -13,7 +13,6 @@ import { ConstantesService } from '../../services/constantes';
 })
 export class VisualizadorRelatorio {
   @Input() relatorio!: Relatorio;
-  @Input() categoriasSelecionadas?: { [categoria: string]: boolean };
   @Output() voltarClicado = new EventEmitter<void>();
 
   public compartilhando: boolean = false;
@@ -24,25 +23,29 @@ export class VisualizadorRelatorio {
     private constantesService: ConstantesService
   ) {}
 
-  ngOnInit(): void {
-    // Inicialização vazia, sem lógica de estatísticas
-  }
+  /**
+   * Ordena os produtos do relatório atual com base na ordem definida em ConstantesService.PRODUTOS.
+   * Produtos que estão no relatório mas não na lista de constantes são adicionados ao final.
+   */
+  get produtosFiltrados(): ProdutoComPreco[] {
+    const produtosDoRelatorio = new Map(
+      this.relatorio.produtos.map((p) => [p.nome, p])
+    );
+    const produtosOrdenados: ProdutoComPreco[] = [];
 
-  get produtosFiltrados() {
-    if (!this.categoriasSelecionadas) return this.relatorio.produtos;
-    
-    // Cria um mapa de produtos do relatório
-    const produtosRelatorio = new Map(this.relatorio.produtos.map(p => [p.nome, p]));
-    // Monta a lista ordenada e filtrada
-    const produtosOrdenados: any[] = [];
-    for (const grupo of this.constantesService.PRODUTOS_CATEGORIZADOS) {
-      if (!this.categoriasSelecionadas[grupo.categoria]) continue;
-      for (const nomeProduto of grupo.produtos) {
-        if (produtosRelatorio.has(nomeProduto)) {
-          produtosOrdenados.push(produtosRelatorio.get(nomeProduto));
-        }
+    for (const nomeProduto of this.constantesService.PRODUTOS) {
+      if (produtosDoRelatorio.has(nomeProduto)) {
+        produtosOrdenados.push(produtosDoRelatorio.get(nomeProduto)!);
       }
     }
+
+    const nomesJaAdicionados = new Set(produtosOrdenados.map((p) => p.nome));
+    for (const produto of this.relatorio.produtos) {
+      if (!nomesJaAdicionados.has(produto.nome)) {
+        produtosOrdenados.push(produto);
+      }
+    }
+
     return produtosOrdenados;
   }
 
@@ -51,7 +54,6 @@ export class VisualizadorRelatorio {
       this.compartilhando = true;
       await this.compartilhamentoService.compartilharRelatorioComoTexto({
         ...this.relatorio,
-        categoriasSelecionadas: this.categoriasSelecionadas
       });
     } catch (erro) {
       console.error('Erro ao compartilhar:', erro);

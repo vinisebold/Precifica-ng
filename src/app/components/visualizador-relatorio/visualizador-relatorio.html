@@ -2,52 +2,87 @@
   <div class="max-w-5xl mx-auto">
     <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 text-slate-800">
       <div class="text-center mb-8">
-        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">{{ relatorio.titulo }}</h2>
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+          {{ relatorio.titulo }}
+        </h2>
         <p class="text-slate-500">
           {{ relatorioService.formatarData(relatorio.data) }}
         </p>
       </div>
 
       <div class="space-y-4">
-        <div *ngFor="let produto of produtosFiltrados" class="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100">
-          <span class="flex-1 text-base font-normal text-gray-800 pr-4 tracking-wide">{{ produto.nome }}</span>
+        @for (produto of produtosFiltrados; track produto.nome) {
+        <div
+          class="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100"
+        >
+          <span
+            class="flex-1 text-base font-normal text-gray-800 pr-4 tracking-wide"
+            >{{ produto.nome }}</span
+          >
           <div class="flex items-center space-x-2">
             <span class="text-gray-500 text-base">R$</span>
-            <span class="text-xl font-medium text-gray-700">{{ relatorioService.formatarPreco(produto.preco).replace('R$ ', '') }}</span>
+            <span class="text-xl font-medium text-gray-700">{{
+              relatorioService.formatarPreco(produto.preco).replace("R$ ", "")
+            }}</span>
           </div>
         </div>
+        }
       </div>
-
-      <!-- Removido botão de estatísticas e bloco de estatísticas -->
     </div>
 
     <div class="flex flex-col sm:flex-row gap-4 mt-8">
       <button
         (click)="compartilhar()"
         [disabled]="compartilhando"
-        class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 flex items-center justify-center"
+        class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600 flex items-center justify-center"
       >
-        <span *ngIf="!compartilhando" class="flex items-center">
+        @if (!compartilhando) {
+        <span class="flex items-center">
           <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M13 4.5a2.5 2.5 0 11.702 4.281l-4.243 2.121a2.503 2.503 0 010 2.196l4.243 2.121a2.5 2.5 0 11-.702.702l-4.243-2.121a2.5 2.5 0 110-3.6l4.243-2.121A2.5 2.5 0 0113 4.5z"></path>
+            <path
+              d="M13 4.5a2.5 2.5 0 11.702 4.281l-4.243 2.121a2.503 2.503 0 010 2.196l4.243 2.121a2.5 2.5 0 11-.702.702l-4.243-2.121a2.5 2.5 0 110-3.6l4.243-2.121A2.5 2.5 0 0113 4.5z"
+            ></path>
           </svg>
           Compartilhar
         </span>
-        <span *ngIf="compartilhando" class="flex items-center">
+        } @else {
+        <span class="flex items-center">
           <svg class="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24">
-             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
           </svg>
           Compartilhando...
         </span>
+        }
       </button>
 
       <button
         (click)="voltar()"
-        class="flex-1 bg-transparent hover:bg-slate-100 text-slate-600 font-bold py-3 px-6 rounded-lg border border-slate-300 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 flex items-center justify-center"
+        class="flex-1 bg-transparent hover:bg-slate-100 text-slate-600 font-bold py-3 px-6 rounded-lg border border-slate-300 transition-all duration-200 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600 flex items-center justify-center"
       >
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        <svg
+          class="w-5 h-5 mr-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          ></path>
         </svg>
         Voltar
       </button>

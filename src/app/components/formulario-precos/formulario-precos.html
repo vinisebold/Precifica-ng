@@ -6,10 +6,10 @@
     <input
       type="text"
       id="titulo-relatorio"
-      [(ngModel)]="tituloRelatorio"
-      (input)="onTituloChange()"
+      [ngModel]="tituloRelatorio"
+      (ngModelChange)="tituloRelatorio = $event; onTituloChange()"
       placeholder="Digite o título do relatório"
-      class="w-full px-4 py-3 text-gray-800 border-0 border-b-2 border-gray-200 focus:border-blue-500 focus:ring-0 bg-transparent rounded-none transition-colors"
+      class="w-full px-4 py-3 text-gray-700 placeholder:text-gray-400 border-0 border-b-2 border-gray-200 focus:border-blue-500 focus:ring-0 bg-transparent rounded-none transition-colors"
     />
   </div>
 
@@ -18,108 +18,31 @@
       Produtos
     </h2>
     <div class="space-y-4">
-      <ng-container *ngFor="let grupo of constantes.PRODUTOS_CATEGORIZADOS">
-        <div class="pt-4 pb-1 flex items-center gap-2">
+      @for (produto of constantes.PRODUTOS; track produto) {
+      <div
+        class="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100 transition-opacity duration-200"
+      >
+        <label
+          [for]="'preco-' + constantes.gerarIdProduto(produto)"
+          class="flex-1 text-base font-normal text-gray-700 pr-4 tracking-wide"
+        >
+          {{ produto }}
+        </label>
+        <div class="flex items-center space-x-2">
+          <span class="text-gray-500 text-base">R$</span>
           <input
-            type="checkbox"
-            class="accent-blue-600 w-4 h-4"
-            [(ngModel)]="categoriasSelecionadas[grupo.categoria]"
-            [id]="'cat-' + grupo.categoria"
-            (change)="onCategoriaSelecionadaChange()"
+            type="number"
+            [id]="'preco-' + constantes.gerarIdProduto(produto)"
+            [ngModel]="precos[produto]"
+            (ngModelChange)="precos[produto] = $event; onPrecoChange()"
+            step="0.01"
+            min="0"
+            placeholder="0,00"
+            class="w-28 px-3 py-2 text-base text-gray-700 placeholder:text-gray-400 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
           />
-          <div class="flex items-center w-full gap-2">
-            <label
-              [for]="'cat-' + grupo.categoria"
-              class="text-base font-semibold text-gray-600 uppercase tracking-wider cursor-pointer select-none whitespace-nowrap"
-            >
-              {{ grupo.categoria }}
-            </label>
-            <div class="flex-grow h-px bg-gray-200"></div>
-          </div>
-        </div>
-        <div
-          *ngFor="let produto of grupo.produtos"
-          class="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100 transition-opacity duration-200"
-          [ngStyle]="{
-            opacity: categoriasSelecionadas[grupo.categoria] ? 1 : 0.4
-          }"
-        >
-          <label
-            [for]="'preco-' + constantes.gerarIdProduto(produto)"
-            class="flex-1 text-base font-normal text-gray-700 pr-4 tracking-wide"
-          >
-            {{ produto }}
-          </label>
-          <div class="flex items-center space-x-2">
-            <span class="text-gray-500 text-base">R$</span>
-            <input
-              type="number"
-              [id]="'preco-' + constantes.gerarIdProduto(produto)"
-              [(ngModel)]="precos[produto]"
-              (input)="onPrecoChange()"
-              step="0.01"
-              min="0"
-              placeholder="0,00"
-              class="w-28 px-3 py-2 text-base text-gray-800 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
-            />
-          </div>
-        </div>
-      </ng-container>
-    </div>
-  </div>
-
-  <div
-    class="clean-section-container"
-    [ngClass]="{
-      'clean-section-enter': !showCleanSection,
-      'clean-section-enter-active': showCleanSection && !isHidingCleanSection,
-      'clean-section-exit': isHidingCleanSection,
-      'clean-section-exit-active': isHidingCleanSection
-    }"
-  >
-    <div
-      *ngIf="showCleanSection || isHidingCleanSection"
-      class="bg-white rounded-xl shadow-xs border border-gray-100 px-5"
-    >
-      <h3 class="text-lg font-semibold text-gray-700 p-2 mt-2 tracking-wide">
-        Categorias Ocultas
-      </h3>
-      <div class="flex flex-wrap gap-2 mb-2 p-2">
-        <div
-          *ngFor="let categoria of getCategoriasDeselected(); let i = index"
-          class="category-tag relative inline-flex items-center bg-orange-50 px-3 py-2 rounded-lg border border-orange-100 cursor-pointer group transition-colors"
-          [class.bg-orange-100]="mobileTagState[categoria]"
-          [style.animation-delay]="i * 0.1 + 's'"
-          (mouseenter)="onCategoriaHover(categoria, true)"
-          (mouseleave)="onCategoriaHover(categoria, false)"
-          (click)="onCategoriaTagClick(categoria)"
-        >
-          <span class="text-sm font-medium text-orange-700 pr-1 tracking-wide">
-            {{ categoria }}
-          </span>
-          <button
-            class="ml-1 text-orange-500 hover:text-orange-700 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
-            [class.opacity-100]="mobileTagState[categoria]"
-            (click)="reativarCategoria(categoria); $event.stopPropagation()"
-            type="button"
-            [attr.aria-label]="'Reativar categoria ' + categoria"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-          </button>
         </div>
       </div>
+      }
     </div>
   </div>
 

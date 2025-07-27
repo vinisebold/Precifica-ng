@@ -2,16 +2,18 @@ import { Injectable } from '@angular/core';
 import { Relatorio, ProdutoComPreco } from '../models/relatorio';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RelatorioService {
-
   /**
    * Gera um relatório baseado nos dados fornecidos
    */
-  public gerarRelatorio(titulo: string, precos: { [nome: string]: number }): Relatorio | null {
+  public gerarRelatorio(
+    titulo: string,
+    precos: { [nome: string]: number }
+  ): Relatorio | null {
     const produtosComPreco = this.extrairProdutosComPreco(precos);
-    
+
     if (produtosComPreco.length === 0) {
       return null;
     }
@@ -19,14 +21,16 @@ export class RelatorioService {
     return {
       titulo: titulo || 'Lista de Preços',
       data: new Date(),
-      produtos: produtosComPreco
+      produtos: produtosComPreco,
     };
   }
 
   /**
    * Extrai produtos que possuem preços válidos
    */
-  private extrairProdutosComPreco(precos: { [nome: string]: number }): ProdutoComPreco[] {
+  private extrairProdutosComPreco(precos: {
+    [nome: string]: number;
+  }): ProdutoComPreco[] {
     return Object.entries(precos)
       .filter(([_, preco]) => preco && preco > 0)
       .map(([nome, preco]) => ({ nome, preco }))
@@ -48,7 +52,7 @@ export class RelatorioService {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   }
 }

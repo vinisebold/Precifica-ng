@@ -46,7 +46,7 @@
   box-shadow: 0 1px 4px rgba(30, 41, 59, 0.04);
 }
 .produto-card:hover {
-  box-shadow: 0 4px 16px rgba(30, 41, 59, 0.10);
+  box-shadow: 0 4px 16px rgba(30, 41, 59, 0.1);
   transform: translateY(-2px) scale(1.01);
 }
 .produto-nome {

@@ -13,7 +13,11 @@
   <main class="max-w-4xl mx-auto px-4 py-6">
     <!-- Seção do Formulário -->
     <section *ngIf="telaAtual === 'formulario'" class="animate-fade-in">
-      <app-formulario-precos (relatorioGerado)="onRelatorioGerado($event)" (categoriasSelecionadasChange)="onCategoriasSelecionadasChange($event)">
+      <!-- 
+        REMOVIDO: (categoriasSelecionadasChange)="onCategoriasSelecionadasChange($event)"
+        O formulário não emite mais este evento.
+      -->
+      <app-formulario-precos (relatorioGerado)="onRelatorioGerado($event)">
       </app-formulario-precos>
     </section>
 
@@ -22,9 +26,12 @@
       *ngIf="telaAtual === 'relatorio' && relatorioAtual"
       class="animate-fade-in"
     >
+      <!-- 
+        REMOVIDO: [categoriasSelecionadas]="categoriasSelecionadas"
+        O visualizador não precisa mais desta informação.
+      -->
       <app-visualizador-relatorio
         [relatorio]="relatorioAtual"
-        [categoriasSelecionadas]="categoriasSelecionadas"
         (voltarClicado)="voltarParaFormulario()"
       >
       </app-visualizador-relatorio>
