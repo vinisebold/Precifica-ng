@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class ConstantesService {
   public readonly CHAVE_ARMAZENAMENTO = 'dados-lista-precos';
+  public readonly CHAVE_CATEGORIAS_SELECIONADAS = 'categoriasSelecionadas'; // Nova constante adicionada
   public readonly NOME_APLICACAO = 'Lista de Preços';
   public readonly VERSAO = '1.0.0';
 

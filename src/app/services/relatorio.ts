@@ -51,26 +51,4 @@ export class RelatorioService {
       day: 'numeric'
     });
   }
-
-  /**
-   * Calcula estatísticas do relatório
-   */
-  public calcularEstatisticas(produtos: ProdutoComPreco[]): {
-    total: number;
-    media: number;
-    maiorPreco: number;
-    menorPreco: number;
-  } {
-    if (produtos.length === 0) {
-      return { total: 0, media: 0, maiorPreco: 0, menorPreco: 0 };
-    }
-
-    const precos = produtos.map(p => p.preco);
-    const total = precos.reduce((soma, preco) => soma + preco, 0);
-    const media = total / produtos.length;
-    const maiorPreco = Math.max(...precos);
-    const menorPreco = Math.min(...precos);
-
-    return { total, media, maiorPreco, menorPreco };
-  }
 }

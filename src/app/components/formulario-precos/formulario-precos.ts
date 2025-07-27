@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConstantesService } from '../../services/constantes';
 import { ArmazenamentoService } from '../../services/armazenamento';
 import { DadosLista } from '../../models/dados-lista';
@@ -41,10 +41,6 @@ export class FormularioPrecos implements OnInit {
     this.configurarAutoSave();
   }
 
-  ngOnChanges(): void {
-    this.armazenamento.salvarCategoriasSelecionadas(this.categoriasSelecionadas);
-  }
-
   private configurarAutoSave(): void {
     this.salvarDados$.pipe(debounceTime(1000)).subscribe(() => {
       this.armazenamento.salvar({
@@ -72,6 +68,7 @@ export class FormularioPrecos implements OnInit {
 
   public onCategoriaSelecionadaChange(): void {
     this.armazenamento.salvarCategoriasSelecionadas(this.categoriasSelecionadas);
+    this.categoriasSelecionadasChange.emit(this.categoriasSelecionadas);
   }
 
   public temPrecosPreenchidos(): boolean {
@@ -79,13 +76,12 @@ export class FormularioPrecos implements OnInit {
   }
 
   public gerarRelatorio(): void {
-    this.categoriasSelecionadasChange.emit(this.categoriasSelecionadas);
     if (this.temPrecosPreenchidos()) {
       this.armazenamento.salvar({
         titulo: this.tituloRelatorio,
         precos: this.precos,
       });
-
+      this.categoriasSelecionadasChange.emit(this.categoriasSelecionadas);
       this.relatorioGerado.emit({
         titulo: this.tituloRelatorio,
         precos: this.precos,

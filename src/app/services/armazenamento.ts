@@ -37,7 +37,14 @@ export class ArmazenamentoService {
   public carregar(): DadosLista | null {
     try {
       const dados = localStorage.getItem(this.constantes.CHAVE_ARMAZENAMENTO);
-      return dados ? JSON.parse(dados) : null;
+      if (!dados) return null;
+      
+      const parsed = JSON.parse(dados);
+      if (!parsed || typeof parsed !== 'object' || !parsed.titulo || !parsed.precos) {
+        console.warn('Dados inválidos no localStorage');
+        return null;
+      }
+      return parsed as DadosLista;
     } catch (erro) {
       console.error('Erro ao carregar do localStorage:', erro);
       return null;
@@ -50,6 +57,7 @@ export class ArmazenamentoService {
   public limpar(): boolean {
     try {
       localStorage.removeItem(this.constantes.CHAVE_ARMAZENAMENTO);
+      localStorage.removeItem(this.constantes.CHAVE_CATEGORIAS_SELECIONADAS || 'categoriasSelecionadas');
       return true;
     } catch (erro) {
       console.error('Erro ao limpar localStorage:', erro);
@@ -64,12 +72,37 @@ export class ArmazenamentoService {
     return localStorage.getItem(this.constantes.CHAVE_ARMAZENAMENTO) !== null;
   }
 
+  /**
+   * Salva categorias selecionadas no localStorage
+   */
   public salvarCategoriasSelecionadas(categoriasSelecionadas: { [categoria: string]: boolean }): void {
-    localStorage.setItem('categoriasSelecionadas', JSON.stringify(categoriasSelecionadas));
+    try {
+      localStorage.setItem(
+        this.constantes.CHAVE_CATEGORIAS_SELECIONADAS || 'categoriasSelecionadas',
+        JSON.stringify(categoriasSelecionadas)
+      );
+    } catch (erro) {
+      console.error('Erro ao salvar categorias selecionadas:', erro);
+    }
   }
 
+  /**
+   * Carrega categorias selecionadas do localStorage
+   */
   public carregarCategoriasSelecionadas(): { [categoria: string]: boolean } | null {
-    const data = localStorage.getItem('categoriasSelecionadas');
-    return data ? JSON.parse(data) : null;
+    try {
+      const data = localStorage.getItem(this.constantes.CHAVE_CATEGORIAS_SELECIONADAS || 'categoriasSelecionadas');
+      if (!data) return null;
+      
+      const parsed = JSON.parse(data);
+      if (!parsed || typeof parsed !== 'object') {
+        console.warn('Categorias selecionadas inválidas no localStorage');
+        return null;
+      }
+      return parsed as { [categoria: string]: boolean };
+    } catch (erro) {
+      console.error('Erro ao carregar categorias selecionadas:', erro);
+      return null;
+    }
   }
 }
