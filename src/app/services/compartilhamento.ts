@@ -28,6 +28,28 @@ export class CompartilhamentoService {
   }
 
   /**
+   * Compartilha o relatório como texto formatado
+   */
+  public async compartilharRelatorioComoTexto(relatorio: Relatorio): Promise<void> {
+    const texto = this.gerarTextoRelatorio(relatorio);
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: relatorio.titulo,
+          text: texto,
+        });
+      } catch (e) {
+        // Usuário pode cancelar
+      }
+    } else if (navigator.clipboard) {
+      await navigator.clipboard.writeText(texto);
+      alert('Texto copiado para a área de transferência!');
+    } else {
+      alert(texto);
+    }
+  }
+
+  /**
    * Verifica se o navegador suporta Web Share API
    */
   private suportaWebShare(): boolean {
@@ -82,49 +104,98 @@ export class CompartilhamentoService {
 
     // Configurações do canvas
     canvas.width = 800;
-    canvas.height = Math.max(600, relatorio.produtos.length * 80 + 300);
+    const produtosHeight = relatorio.produtos.length * 80;
+    const headerHeight = 120;
+    const footerHeight = 110;
+    canvas.height = Math.max(600, headerHeight + produtosHeight + footerHeight);
 
-    // Fundo com gradiente
-    const gradiente = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradiente.addColorStop(0, '#667eea');
-    gradiente.addColorStop(1, '#764ba2');
-    
-    ctx.fillStyle = gradiente;
+    // Fundo branco
+    ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Cabeçalho destacado
+    ctx.fillStyle = '#e0e7ef';
+    ctx.fillRect(0, 0, canvas.width, headerHeight);
+    ctx.fillStyle = '#2563eb';
+    ctx.fillRect(0, headerHeight - 6, canvas.width, 6);
+
     // Título
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 32px Arial';
+    ctx.fillStyle = '#23272f';
+    ctx.font = 'bold 34px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(relatorio.titulo, canvas.width / 2, 60);
+    ctx.fillText(relatorio.titulo, canvas.width / 2, 54);
 
     // Data
     ctx.font = '18px Arial';
-    ctx.fillStyle = '#e0e7ff';
-    ctx.fillText(this.relatorioService.formatarData(relatorio.data), canvas.width / 2, 90);
+    ctx.fillStyle = '#64748b';
+    ctx.fillText(this.relatorioService.formatarData(relatorio.data), canvas.width / 2, 86);
 
     // Produtos
-    let y = 150;
+    let y = headerHeight + 30;
     ctx.textAlign = 'left';
-
-    relatorio.produtos.forEach(produto => {
-      // Fundo do produto
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-      ctx.fillRect(40, y - 30, canvas.width - 80, 60);
+    relatorio.produtos.forEach((produto, idx) => {
+      // Card arredondado com sombra sutil
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(50 + 12, y - 24);
+      ctx.arcTo(canvas.width - 50, y - 24, canvas.width - 50, y + 36, 12);
+      ctx.arcTo(canvas.width - 50, y + 36, 50, y + 36, 12);
+      ctx.arcTo(50, y + 36, 50, y - 24, 12);
+      ctx.arcTo(50, y - 24, canvas.width - 50, y - 24, 12);
+      ctx.closePath();
+      ctx.shadowColor = 'rgba(30,41,59,0.07)';
+      ctx.shadowBlur = 8;
+      ctx.fillStyle = '#f3f4f6';
+      ctx.fill();
+      ctx.restore();
 
       // Nome do produto
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '20px Arial';
-      ctx.fillText(produto.nome, 60, y);
+      ctx.font = '600 20px Arial';
+      ctx.fillStyle = '#334155';
+      ctx.fillText(produto.nome, 70, y + 10);
 
       // Preço
       ctx.font = 'bold 24px Arial';
+      ctx.fillStyle = '#2563eb';
       ctx.textAlign = 'right';
-      ctx.fillText(this.relatorioService.formatarPreco(produto.preco), canvas.width - 60, y);
-
+      ctx.fillText(this.relatorioService.formatarPreco(produto.preco), canvas.width - 70, y + 10);
       ctx.textAlign = 'left';
-      y += 70;
+
+      // Separador
+      if (idx < relatorio.produtos.length - 1) {
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(70, y + 32);
+        ctx.lineTo(canvas.width - 70, y + 32);
+        ctx.stroke();
+      }
+      y += 80;
     });
+
+    // Rodapé com estatísticas
+    const estatisticas = this.relatorioService.calcularEstatisticas(relatorio.produtos);
+    ctx.save();
+    ctx.fillStyle = '#f1f5f9';
+    ctx.fillRect(0, canvas.height - footerHeight, canvas.width, footerHeight);
+    ctx.restore();
+    ctx.font = 'bold 20px Arial';
+    ctx.fillStyle = '#23272f';
+    ctx.textAlign = 'center';
+    ctx.fillText('Resumo', canvas.width / 2, canvas.height - footerHeight + 36);
+    ctx.font = '16px Arial';
+    ctx.fillStyle = '#64748b';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Total de Itens:`, 80, canvas.height - footerHeight + 70);
+    ctx.fillText(`Valor Total:`, 320, canvas.height - footerHeight + 70);
+    ctx.fillText(`Preço Médio:`, 480, canvas.height - footerHeight + 70);
+    ctx.fillText(`Maior Preço:`, 640, canvas.height - footerHeight + 70);
+    ctx.font = 'bold 18px Arial';
+    ctx.fillStyle = '#2563eb';
+    ctx.fillText(`${relatorio.produtos.length}`, 200, canvas.height - footerHeight + 70);
+    ctx.fillText(`${this.relatorioService.formatarPreco(estatisticas.total)}`, 410, canvas.height - footerHeight + 70);
+    ctx.fillText(`${this.relatorioService.formatarPreco(estatisticas.media)}`, 570, canvas.height - footerHeight + 70);
+    ctx.fillText(`${this.relatorioService.formatarPreco(estatisticas.maiorPreco)}`, 740, canvas.height - footerHeight + 70);
 
     return canvas;
   }

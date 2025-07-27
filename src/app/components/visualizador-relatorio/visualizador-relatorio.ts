@@ -17,6 +17,7 @@ export class VisualizadorRelatorio {
   public compartilhando: boolean = false;
   public mostrarEstatisticas: boolean = false;
   public estatisticas: any = {};
+  public mostrarSelecaoCompartilhamento: boolean = false;
 
   constructor(
     public relatorioService: RelatorioService,
@@ -34,6 +35,11 @@ export class VisualizadorRelatorio {
   }
 
   public async compartilhar(): Promise<void> {
+    this.mostrarSelecaoCompartilhamento = true;
+  }
+
+  public async compartilharComoImagem(): Promise<void> {
+    this.mostrarSelecaoCompartilhamento = false;
     try {
       this.compartilhando = true;
       await this.compartilhamentoService.compartilharRelatorio(this.relatorio);
@@ -43,6 +49,23 @@ export class VisualizadorRelatorio {
     } finally {
       this.compartilhando = false;
     }
+  }
+
+  public async compartilharComoTexto(): Promise<void> {
+    this.mostrarSelecaoCompartilhamento = false;
+    try {
+      this.compartilhando = true;
+      await this.compartilhamentoService.compartilharRelatorioComoTexto(this.relatorio);
+    } catch (erro) {
+      console.error('Erro ao compartilhar:', erro);
+      alert('Erro ao compartilhar. Tente novamente.');
+    } finally {
+      this.compartilhando = false;
+    }
+  }
+
+  public cancelarCompartilhamento(): void {
+    this.mostrarSelecaoCompartilhamento = false;
   }
 
   public toggleEstatisticas(): void {
