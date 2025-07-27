@@ -25,31 +25,53 @@
       Produtos
     </h2>
     <div class="space-y-4">
-      <!-- Mais espaçamento entre itens -->
-      <div
-        *ngFor="let produto of constantes.PRODUTOS"
-        class="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100"
-      >
-        <label
-          [for]="'preco-' + constantes.gerarIdProduto(produto)"
-          class="flex-1 text-base font-normal text-gray-700 pr-4 tracking-wide"
-        >
-          {{ produto }}
-        </label>
-        <div class="flex items-center space-x-2">
-          <span class="text-gray-500 text-base">R$</span>
+      <ng-container *ngFor="let grupo of constantes.PRODUTOS_CATEGORIZADOS">
+        <div class="pt-4 pb-1 flex items-center gap-2">
           <input
-            type="number"
-            [id]="'preco-' + constantes.gerarIdProduto(produto)"
-            [(ngModel)]="precos[produto]"
-            (input)="onPrecoChange()"
-            step="0.01"
-            min="0"
-            placeholder="0,00"
-            class="w-28 px-3 py-2 text-base text-gray-800 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+            type="checkbox"
+            class="accent-blue-600 w-4 h-4"
+            [(ngModel)]="categoriasSelecionadas[grupo.categoria]"
+            [id]="'cat-' + grupo.categoria"
+            (change)="onCategoriaSelecionadaChange()"
           />
+          <div class="flex items-center w-full gap-2">
+            <label
+              [for]="'cat-' + grupo.categoria"
+              class="text-base font-semibold text-gray-600 uppercase tracking-wider cursor-pointer select-none whitespace-nowrap"
+            >
+              {{ grupo.categoria }}
+            </label>
+            <div class="flex-grow h-px bg-gray-200"></div>
+          </div>
         </div>
-      </div>
+        <div
+          *ngFor="let produto of grupo.produtos"
+          class="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100 transition-opacity duration-200"
+          [ngStyle]="{
+            opacity: categoriasSelecionadas[grupo.categoria] ? 1 : 0.4
+          }"
+        >
+          <label
+            [for]="'preco-' + constantes.gerarIdProduto(produto)"
+            class="flex-1 text-base font-normal text-gray-700 pr-4 tracking-wide"
+          >
+            {{ produto }}
+          </label>
+          <div class="flex items-center space-x-2">
+            <span class="text-gray-500 text-base">R$</span>
+            <input
+              type="number"
+              [id]="'preco-' + constantes.gerarIdProduto(produto)"
+              [(ngModel)]="precos[produto]"
+              (input)="onPrecoChange()"
+              step="0.01"
+              min="0"
+              placeholder="0,00"
+              class="w-28 px-3 py-2 text-base text-gray-800 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+            />
+          </div>
+        </div>
+      </ng-container>
     </div>
   </div>
 

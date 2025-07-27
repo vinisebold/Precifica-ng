@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Compartilhamento } from './compartilhamento';
+import { CompartilhamentoService } from './compartilhamento';
 
 describe('Compartilhamento', () => {
-  let service: Compartilhamento;
+  let service: CompartilhamentoService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Compartilhamento);
+    service = TestBed.inject(CompartilhamentoService);
   });
 
   it('should be created', () => {

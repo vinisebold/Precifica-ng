@@ -12,11 +12,10 @@ import { CompartilhamentoService } from '../../services/compartilhamento';
 })
 export class VisualizadorRelatorio {
   @Input() relatorio!: Relatorio;
+  @Input() categoriasSelecionadas?: { [categoria: string]: boolean };
   @Output() voltarClicado = new EventEmitter<void>();
 
   public compartilhando: boolean = false;
-  public mostrarEstatisticas: boolean = false;
-  public estatisticas: any = {};
   public mostrarSelecaoCompartilhamento: boolean = false;
 
   constructor(
@@ -25,24 +24,57 @@ export class VisualizadorRelatorio {
   ) {}
 
   ngOnInit(): void {
-    this.calcularEstatisticas();
+    // Remover propriedades e métodos relacionados a estatísticas
   }
 
-  private calcularEstatisticas(): void {
-    this.estatisticas = this.relatorioService.calcularEstatisticas(
-      this.relatorio.produtos
-    );
+  get produtosFiltrados() {
+    if (!this.categoriasSelecionadas) return this.relatorio.produtos;
+    // Lista de categorias e produtos igual ao ConstantesService
+    const grupos = [
+      { categoria: 'Cebolas', produtos: [
+        'Cebola CX 3', 'Cebola CX 2', 'Cebola VC 1', 'Cebola fraca', 'Cebola roxa',
+      ] },
+      { categoria: 'Batatas', produtos: [
+        'Batata lavada', 'Batata escovada', 'Batata média', 'Batata para rechear', 'Batata roxa', 'Batata para fritura', 'Batata palha', 'Batata chips',
+      ] },
+      { categoria: 'Alho', produtos: ['Alho CX 10kg'] },
+      { categoria: 'Ovos', produtos: ['Ovos embalados', 'Ovos bandeja'] },
+      { categoria: 'Feijões', produtos: ['Feijão preto', 'Feijão vermelho'] },
+      { categoria: 'Raízes e Tubérculos', produtos: [
+        'Cenoura boa', 'Cenoura G', 'Beterraba G', 'Beterraba boa', 'Beterraba miúda', 'Batata-doce G', 'Batata-doce boa', 'Batata-doce P', 'Gengibre',
+      ] },
+      { categoria: 'Abóboras', produtos: ['Abóbora seca', 'Abóbora verde'] },
+      { categoria: 'Tomates', produtos: ['Tomate G', 'Tomate médio', 'Tomate Saladette', 'Tomate cereja'] },
+      { categoria: 'Outros Vegetais', produtos: ['Pepino', 'Pepino japonês', 'Vagem', 'Chuchu'] },
+      { categoria: 'Folhas Verdes e Ervas', produtos: [
+        'Alface crespa', 'Alface americana', 'Rúcula', 'Agrião', 'Cebolinha', 'Salsa',
+      ] },
+      { categoria: 'Repolhos e Similares', produtos: [
+        'Repolho verde', 'Repolho roxo', 'Couve-flor', 'Brócolis',
+      ] },
+      { categoria: 'Frutas', produtos: [
+        'Manga', 'Limão', 'Laranja', 'Melão', 'Abacaxi',
+      ] },
+    ];
+    // Cria um mapa de produtos do relatório
+    const produtosRelatorio = new Map(this.relatorio.produtos.map(p => [p.nome, p]));
+    // Monta a lista ordenada e filtrada
+    const produtosOrdenados: any[] = [];
+    for (const grupo of grupos) {
+      if (!this.categoriasSelecionadas[grupo.categoria]) continue;
+      for (const nomeProduto of grupo.produtos) {
+        if (produtosRelatorio.has(nomeProduto)) {
+          produtosOrdenados.push(produtosRelatorio.get(nomeProduto));
+        }
+      }
+    }
+    return produtosOrdenados;
   }
 
   public async compartilhar(): Promise<void> {
-    this.mostrarSelecaoCompartilhamento = true;
-  }
-
-  public async compartilharComoImagem(): Promise<void> {
-    this.mostrarSelecaoCompartilhamento = false;
     try {
       this.compartilhando = true;
-      await this.compartilhamentoService.compartilharRelatorio(this.relatorio);
+      await this.compartilhamentoService.compartilharRelatorioComoTexto(this.relatorio);
     } catch (erro) {
       console.error('Erro ao compartilhar:', erro);
       alert('Erro ao compartilhar. Tente novamente.');
@@ -66,10 +98,6 @@ export class VisualizadorRelatorio {
 
   public cancelarCompartilhamento(): void {
     this.mostrarSelecaoCompartilhamento = false;
-  }
-
-  public toggleEstatisticas(): void {
-    this.mostrarEstatisticas = !this.mostrarEstatisticas;
   }
 
   public voltar(): void {

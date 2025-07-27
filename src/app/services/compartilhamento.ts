@@ -30,8 +30,45 @@ export class CompartilhamentoService {
   /**
    * Compartilha o relatório como texto formatado
    */
-  public async compartilharRelatorioComoTexto(relatorio: Relatorio): Promise<void> {
-    const texto = this.gerarTextoRelatorio(relatorio);
+  public async compartilharRelatorioComoTexto(relatorio: Relatorio & { categoriasSelecionadas?: { [categoria: string]: boolean } }): Promise<void> {
+    let produtos = relatorio.produtos;
+    if (relatorio.categoriasSelecionadas) {
+      // Mapear produto para categoria
+      const categoriaPorProduto: { [produto: string]: string } = {};
+      const grupos = [
+        { categoria: 'Cebolas', produtos: [
+          'Cebola CX 3', 'Cebola CX 2', 'Cebola VC 1', 'Cebola fraca', 'Cebola roxa',
+        ] },
+        { categoria: 'Batatas', produtos: [
+          'Batata lavada', 'Batata escovada', 'Batata média', 'Batata para rechear', 'Batata roxa', 'Batata para fritura', 'Batata palha', 'Batata chips',
+        ] },
+        { categoria: 'Alho', produtos: ['Alho CX 10kg'] },
+        { categoria: 'Ovos', produtos: ['Ovos embalados', 'Ovos bandeja'] },
+        { categoria: 'Feijões', produtos: ['Feijão preto', 'Feijão vermelho'] },
+        { categoria: 'Raízes e Tubérculos', produtos: [
+          'Cenoura boa', 'Cenoura G', 'Beterraba G', 'Beterraba boa', 'Beterraba miúda', 'Batata-doce G', 'Batata-doce boa', 'Batata-doce P', 'Gengibre',
+        ] },
+        { categoria: 'Abóboras', produtos: ['Abóbora seca', 'Abóbora verde'] },
+        { categoria: 'Tomates', produtos: ['Tomate G', 'Tomate médio', 'Tomate Saladette', 'Tomate cereja'] },
+        { categoria: 'Outros Vegetais', produtos: ['Pepino', 'Pepino japonês', 'Vagem', 'Chuchu'] },
+        { categoria: 'Folhas Verdes e Ervas', produtos: [
+          'Alface crespa', 'Alface americana', 'Rúcula', 'Agrião', 'Cebolinha', 'Salsa',
+        ] },
+        { categoria: 'Repolhos e Similares', produtos: [
+          'Repolho verde', 'Repolho roxo', 'Couve-flor', 'Brócolis',
+        ] },
+        { categoria: 'Frutas', produtos: [
+          'Manga', 'Limão', 'Laranja', 'Melão', 'Abacaxi',
+        ] },
+      ];
+      for (const grupo of grupos) {
+        for (const produto of grupo.produtos) {
+          categoriaPorProduto[produto] = grupo.categoria;
+        }
+      }
+      produtos = produtos.filter(p => relatorio.categoriasSelecionadas![categoriaPorProduto[p.nome]]);
+    }
+    const texto = this.gerarTextoRelatorio({ ...relatorio, produtos });
     if (navigator.share) {
       try {
         await navigator.share({

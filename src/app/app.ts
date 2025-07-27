@@ -19,6 +19,7 @@ export class App {
   public relatorioAtual: Relatorio | null = null;
   public carregando: boolean = false;
   public mensagemCarregamento: string = 'Processando...';
+  public categoriasSelecionadas: { [categoria: string]: boolean } = {};
 
   constructor(private relatorioService: RelatorioService) {}
 
@@ -64,6 +65,13 @@ export class App {
   public voltarParaFormulario(): void {
     this.telaAtual = 'formulario';
     this.relatorioAtual = null;
+  }
+
+  /**
+   * Recebe as categorias selecionadas do formulário
+   */
+  public onCategoriasSelecionadasChange(categorias: { [categoria: string]: boolean }) {
+    this.categoriasSelecionadas = { ...categorias };
   }
 
   /**

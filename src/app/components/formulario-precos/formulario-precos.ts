@@ -18,9 +18,11 @@ export class FormularioPrecos implements OnInit {
     titulo: string;
     precos: { [key: string]: number };
   }>();
+  @Output() categoriasSelecionadasChange = new EventEmitter<{ [categoria: string]: boolean }>();
 
   public tituloRelatorio: string = '';
   public precos: { [nomeProduto: string]: number } = {};
+  public categoriasSelecionadas: { [categoria: string]: boolean } = {};
 
   private salvarDados$ = new Subject<void>();
 
@@ -30,8 +32,17 @@ export class FormularioPrecos implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Inicializa todas as categorias como selecionadas
+    const cache = this.armazenamento.carregarCategoriasSelecionadas();
+    for (const grupo of this.constantes.PRODUTOS_CATEGORIZADOS) {
+      this.categoriasSelecionadas[grupo.categoria] = cache && cache[grupo.categoria] !== undefined ? cache[grupo.categoria] : true;
+    }
     this.carregarDadosSalvos();
     this.configurarAutoSave();
+  }
+
+  ngOnChanges(): void {
+    this.armazenamento.salvarCategoriasSelecionadas(this.categoriasSelecionadas);
   }
 
   private configurarAutoSave(): void {
@@ -59,11 +70,16 @@ export class FormularioPrecos implements OnInit {
     this.salvarDados$.next();
   }
 
+  public onCategoriaSelecionadaChange(): void {
+    this.armazenamento.salvarCategoriasSelecionadas(this.categoriasSelecionadas);
+  }
+
   public temPrecosPreenchidos(): boolean {
     return Object.values(this.precos).some((preco) => preco && preco > 0);
   }
 
   public gerarRelatorio(): void {
+    this.categoriasSelecionadasChange.emit(this.categoriasSelecionadas);
     if (this.temPrecosPreenchidos()) {
       this.armazenamento.salvar({
         titulo: this.tituloRelatorio,

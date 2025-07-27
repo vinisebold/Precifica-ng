@@ -8,49 +8,17 @@
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div
-          *ngFor="let produto of relatorio.produtos"
-          class="bg-slate-100 border border-slate-200 rounded-xl p-5 text-slate-800"
-        >
-          <div class="flex justify-between items-start">
-            <h3 class="font-semibold text-base text-slate-700 w-2/3">{{ produto.nome }}</h3>
-            <span class="text-xl font-bold text-slate-900 text-right">
-              {{ relatorioService.formatarPreco(produto.preco) }}
-            </span>
+      <div class="space-y-4">
+        <div *ngFor="let produto of produtosFiltrados" class="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100">
+          <span class="flex-1 text-base font-normal text-gray-800 pr-4 tracking-wide">{{ produto.nome }}</span>
+          <div class="flex items-center space-x-2">
+            <span class="text-gray-500 text-base">R$</span>
+            <span class="text-xl font-medium text-gray-700">{{ relatorioService.formatarPreco(produto.preco).replace('R$ ', '') }}</span>
           </div>
         </div>
       </div>
 
-      <div
-        class="mt-10 pt-8 border-t border-slate-200"
-        *ngIf="mostrarEstatisticas"
-      >
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div class="bg-slate-100 rounded-xl p-4">
-            <div class="text-sm font-medium text-slate-500 uppercase tracking-wider">Total de Itens</div>
-            <div class="text-2xl font-bold text-slate-900 mt-1">{{ relatorio.produtos.length }}</div>
-          </div>
-          <div class="bg-slate-100 rounded-xl p-4">
-            <div class="text-sm font-medium text-slate-500 uppercase tracking-wider">Valor Total</div>
-            <div class="text-2xl font-bold text-slate-900 mt-1">
-              {{ relatorioService.formatarPreco(estatisticas.total) }}
-            </div>
-          </div>
-          <div class="bg-slate-100 rounded-xl p-4">
-            <div class="text-sm font-medium text-slate-500 uppercase tracking-wider">Preço Médio</div>
-            <div class="text-2xl font-bold text-slate-900 mt-1">
-              {{ relatorioService.formatarPreco(estatisticas.media) }}
-            </div>
-          </div>
-          <div class="bg-slate-100 rounded-xl p-4">
-            <div class="text-sm font-medium text-slate-500 uppercase tracking-wider">Maior Preço</div>
-            <div class="text-2xl font-bold text-slate-900 mt-1">
-              {{ relatorioService.formatarPreco(estatisticas.maiorPreco) }}
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Removido botão de estatísticas e bloco de estatísticas -->
     </div>
 
     <div class="flex flex-col sm:flex-row gap-4 mt-8">
@@ -75,13 +43,6 @@
       </button>
 
       <button
-        (click)="toggleEstatisticas()"
-        class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-6 rounded-lg transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-      >
-        {{ mostrarEstatisticas ? "Ocultar" : "Mostrar" }} Estatísticas
-      </button>
-
-      <button
         (click)="voltar()"
         class="flex-1 bg-transparent hover:bg-slate-100 text-slate-600 font-bold py-3 px-6 rounded-lg border border-slate-300 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 flex items-center justify-center"
       >
@@ -90,14 +51,6 @@
         </svg>
         Voltar
       </button>
-    </div>
-  </div>
-  <div *ngIf="mostrarSelecaoCompartilhamento" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-    <div class="bg-white rounded-xl shadow-xl p-8 w-full max-w-xs flex flex-col items-center">
-      <h3 class="text-lg font-bold text-slate-800 mb-6">Como deseja compartilhar?</h3>
-      <button (click)="compartilharComoImagem()" class="w-full mb-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200">Imagem</button>
-      <button (click)="compartilharComoTexto()" class="w-full mb-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-6 rounded-lg transition-all duration-200">Texto</button>
-      <button (click)="cancelarCompartilhamento()" class="w-full bg-transparent hover:bg-slate-100 text-slate-500 font-bold py-2 px-6 rounded-lg border border-slate-200 transition-all duration-200">Cancelar</button>
     </div>
   </div>
 </div>

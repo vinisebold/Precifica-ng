@@ -63,4 +63,13 @@ export class ArmazenamentoService {
   public existemDados(): boolean {
     return localStorage.getItem(this.constantes.CHAVE_ARMAZENAMENTO) !== null;
   }
+
+  public salvarCategoriasSelecionadas(categoriasSelecionadas: { [categoria: string]: boolean }): void {
+    localStorage.setItem('categoriasSelecionadas', JSON.stringify(categoriasSelecionadas));
+  }
+
+  public carregarCategoriasSelecionadas(): { [categoria: string]: boolean } | null {
+    const data = localStorage.getItem('categoriasSelecionadas');
+    return data ? JSON.parse(data) : null;
+  }
 }
