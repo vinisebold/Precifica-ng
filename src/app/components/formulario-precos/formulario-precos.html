@@ -1,11 +1,6 @@
 <div class="space-y-8">
-  <!-- Aumentado o espaçamento vertical -->
-
-  <!-- Título do Relatório - Estilo refinado -->
   <div class="bg-white rounded-xl shadow-xs border border-gray-100 p-7">
-    <!-- Bordas mais suaves e padding ajustado -->
-    <label class="block text-base font-medium text-gray-700 mb-3 tracking-wide">
-      <!-- Fonte ligeiramente maior e espaçamento -->
+    <label class="block text-lg font-semibold text-gray-700 mb-3 tracking-wide">
       Título do Relatório
     </label>
     <input
@@ -18,10 +13,8 @@
     />
   </div>
 
-  <!-- Lista de Produtos - Layout mais clean -->
   <div class="bg-white rounded-xl shadow-xs border border-gray-100 p-7">
-    <h2 class="text-lg font-semibold text-gray-800 mb-5 tracking-wide">
-      <!-- Ajuste de cor e espaçamento -->
+    <h2 class="text-lg font-semibold text-gray-700 mb-5 tracking-wide">
       Produtos
     </h2>
     <div class="space-y-4">
@@ -75,9 +68,62 @@
     </div>
   </div>
 
-  <!-- Ações (mantidas sem alterações visíveis) -->
+  <div
+    class="clean-section-container"
+    [ngClass]="{
+      'clean-section-enter': !showCleanSection,
+      'clean-section-enter-active': showCleanSection && !isHidingCleanSection,
+      'clean-section-exit': isHidingCleanSection,
+      'clean-section-exit-active': isHidingCleanSection
+    }"
+  >
+    <div
+      *ngIf="showCleanSection || isHidingCleanSection"
+      class="bg-white rounded-xl shadow-xs border border-gray-100 px-5"
+    >
+      <h3 class="text-lg font-semibold text-gray-700 p-2 mt-2 tracking-wide">
+        Categorias Ocultas
+      </h3>
+      <div class="flex flex-wrap gap-2 mb-2 p-2">
+        <div
+          *ngFor="let categoria of getCategoriasDeselected(); let i = index"
+          class="category-tag relative inline-flex items-center bg-orange-50 px-3 py-2 rounded-lg border border-orange-100 cursor-pointer group transition-colors"
+          [class.bg-orange-100]="mobileTagState[categoria]"
+          [style.animation-delay]="i * 0.1 + 's'"
+          (mouseenter)="onCategoriaHover(categoria, true)"
+          (mouseleave)="onCategoriaHover(categoria, false)"
+          (click)="onCategoriaTagClick(categoria)"
+        >
+          <span class="text-sm font-medium text-orange-700 pr-1 tracking-wide">
+            {{ categoria }}
+          </span>
+          <button
+            class="ml-1 text-orange-500 hover:text-orange-700 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+            [class.opacity-100]="mobileTagState[categoria]"
+            (click)="reativarCategoria(categoria); $event.stopPropagation()"
+            type="button"
+            [attr.aria-label]="'Reativar categoria ' + categoria"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="flex flex-col sm:flex-row gap-3 pt-2">
-    <!-- Adicionado padding top -->
     <button
       (click)="gerarRelatorio()"
       [disabled]="!temPrecosPreenchidos()"
