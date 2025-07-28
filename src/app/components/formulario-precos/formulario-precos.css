@@ -2,9 +2,35 @@
 .sticky {
   position: sticky;
 }
-.scroll-mt-20 {
-  scroll-margin-top: 5rem; /* Ajusta o deslocamento ao rolar para âncoras */
+
+nav[role="tablist"] {
+  border-bottom: 1px solid #e5e7eb; /* cor border-gray-200 */
+  overflow-x: auto; /* Permite scroll horizontal para muitas tabs */
+  -webkit-overflow-scrolling: touch; /* Suporte para scroll suave em iOS */
+  white-space: nowrap; /* Evita quebra de linha para os itens da tab */
 }
+
+nav[role="tablist"] ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav[role="tablist"] li {
+  flex-shrink: 0; /* Impede que os itens da tab encolham */
+}
+
+nav[role="tablist"] button {
+  padding-bottom: 0.75rem; /* Ajuste para ter espaço para a borda inferior */
+  border-bottom: 2px solid transparent; /* Bordas transparentes por padrão */
+  transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+nav[role="tablist"] button[aria-selected="true"] {
+  border-color: #3b82f6; /* cor blue-600 */
+}
+
 @media (max-width: 640px) {
   .text-base {
     font-size: 0.875rem; /* Reduz tamanho da fonte em telas pequenas */

@@ -15,109 +15,88 @@
   </div>
 
   <!-- Barra de Navegação por Categorias -->
-  <div
-    class="bg-white rounded-xl shadow-xs border border-gray-100 p-4 sticky top-0 z-10"
+  <nav
+    class="bg-white rounded-xl shadow-xs border border-gray-100 p-4 sticky top-20 z-10"
+    role="tablist"
   >
-    <div class="flex flex-wrap gap-2">
-      @for (categoria of constantes.CATEGORIAS; track categoria) {
-      <a
-        [href]="'#' + gerarIdCategoria(categoria)"
-        class="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-blue-100 hover:text-blue-600 transition-colors"
-        [ngClass]="{
-          'bg-blue-100 text-blue-600': categoriaAberta === categoria
-        }"
-        (click)="toggleCategoria(categoria)"
-      >
-        {{ categoria }}
-      </a>
-      }
-    </div>
-  </div>
-
-  <!-- Produtos com Acordeão -->
-  <div class="bg-white rounded-xl shadow-xs border border-gray-100 p-7">
-    <h2 class="text-lg font-semibold text-gray-700 mb-5 tracking-wide">
-      Produtos
-    </h2>
-    <div class="space-y-4">
-      @for (categoria of constantes.CATEGORIAS; track categoria) {
-      <div [id]="gerarIdCategoria(categoria)" class="scroll-mt-20">
-        <h3
-          class="text-base font-medium text-gray-600 mb-3 tracking-wide cursor-pointer flex items-center justify-between"
-          (click)="toggleCategoria(categoria)"
-        >
-          {{ categoria }}
-          <svg
-            class="w-5 h-5 transition-transform duration-300"
-            [ngClass]="{ 'rotate-180': categoriaAberta === categoria }"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </h3>
-        <div
-          class="space-y-4"
+    <ul class="flex flex-wrap gap-2">
+      @for (categoria of categoriasExibicao; track categoria) {
+      <li role="presentation">
+        <button
+          #tabButton
+          id="tab-{{ gerarIdCategoria(categoria) }}"
+          role="tab"
+          [attr.aria-selected]="categoriaSelecionada === categoria"
+          [attr.aria-controls]="'panel-' + gerarIdCategoria(categoria)"
+          (click)="selecionarCategoria(categoria)"
+          class="px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           [ngClass]="{
-            hidden: categoriaAberta !== categoria
+            'text-blue-600 border-b-2 border-blue-600': categoriaSelecionada === categoria,
+            'text-gray-700 hover:text-blue-600': categoriaSelecionada !== categoria
           }"
         >
-          @for (produto of produtosPorCategoria[categoria]; track produto.nome)
-          {
-          <div
-            class="flex items-center justify-between p-4 rounded-lg border transition-colors duration-300"
-            [ngClass]="{
-              'bg-amber-50/50 border-amber-100': !precos[produto.nome],
-              'bg-gray-50/50 border-gray-100': precos[produto.nome]
-            }"
-          >
-            <label
-              [for]="'preco-' + constantes.gerarIdProduto(produto.nome)"
-              class="flex-1 text-base font-normal text-gray-700 pr-4 tracking-wide"
-            >
-              {{ produto.nome }}
-            </label>
-            <div class="flex items-center space-x-2">
-              <span class="text-gray-500 text-base">R$</span>
-              <input
-                type="number"
-                [id]="'preco-' + constantes.gerarIdProduto(produto.nome)"
-                [ngModel]="precos[produto.nome]"
-                (ngModelChange)="precos[produto.nome] = $event; onPrecoChange()"
-                step="0.01"
-                min="0"
-                placeholder="0,00"
-                class="w-24 sm:w-28 px-3 py-2 text-base text-gray-700 placeholder:text-gray-400 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
-              />
-            </div>
-          </div>
-          }
-        </div>
-      </div>
+          {{ categoria }}
+        </button>
+      </li>
       }
+    </ul>
+  </nav>
+
+  <!-- Produtos por Categoria Selecionada -->
+  @if (categoriaSelecionada) {
+  <div
+    id="panel-{{ gerarIdCategoria(categoriaSelecionada) }}"
+    role="tabpanel"
+    [attr.aria-labelledby]="'tab-' + gerarIdCategoria(categoriaSelecionada)"
+    class="bg-white rounded-xl shadow-xs border border-gray-100 p-7"
+  >
+    <h2 class="text-lg font-semibold text-gray-700 mb-5 tracking-wide">
+      {{ categoriaSelecionada }}
+    </h2>
+    <div class="space-y-4">
+      @if (produtosPorCategoria[categoriaSelecionada]) {
+        @for (produto of produtosPorCategoria[categoriaSelecionada]; track
+        produto.nome) {
+        <div
+          class="flex items-center justify-between p-4 rounded-lg border transition-colors duration-300"
+          [ngClass]="{
+            'bg-amber-50/50 border-amber-100': !precos[produto.nome],
+            'bg-green-50/50 border-green-200': precos[produto.nome]
+          }"
+        >
+          <label
+            [for]="'preco-' + constantes.gerarIdProduto(produto.nome)"
+            class="flex-1 text-base font-normal text-gray-700 pr-4 tracking-wide"
+          >
+            {{ produto.nome }}
+          </label>
+          <div class="flex items-center space-x-2">
+            <span class="text-gray-500 text-base">R$</span>
+            <input
+              type="number"
+              [id]="'preco-' + constantes.gerarIdProduto(produto.nome)"
+              [ngModel]="precos[produto.nome]"
+              (ngModelChange)="precos[produto.nome] = $event; onPrecoChange()"
+              step="0.01"
+              min="0"
+              placeholder="0,00"
+              class="w-24 sm:w-28 px-3 py-2 text-base text-gray-700 placeholder:text-gray-400 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+            />
+          </div>
+        </div>
+        } } @else {
+        <p class="text-center text-gray-500 py-4">
+          Nenhum produto encontrado para esta categoria.
+        </p>
+        }
     </div>
   </div>
-
-  <!-- Botões -->
-  <div class="flex flex-col sm:flex-row gap-3 pt-2">
-    <button
-      (click)="gerarRelatorio()"
-      [disabled]="!temPrecosPreenchidos()"
-      class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-    >
-      Gerar Relatório
-    </button>
-    <button
-      (click)="limparTudo()"
-      class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-6 rounded-lg transition-colors focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-    >
-      Limpar Tudo
-    </button>
+  } @else {
+  <div class="bg-white rounded-xl shadow-xs border border-gray-100 p-7">
+    <p class="text-center text-gray-500 py-4">
+      Selecione uma categoria para ver os produtos.
+    </p>
   </div>
+  }
+
 </div>

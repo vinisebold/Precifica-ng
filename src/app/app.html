@@ -1,9 +1,19 @@
-<div class="bg-gray-50 min-h-screen">
-  <app-header [descricao]="descricaoHeader"></app-header>
+<div class="bg-white min-h-screen">
+  <app-header
+    [descricao]="descricaoHeader"
+    [mostrarBotoesAcao]="telaAtual === 'formulario'"
+    [gerarRelatorioDisabled]="!formularioPrecos?.temPrecosPreenchidos()"
+    (gerarRelatorioClick)="formularioPrecos?.gerarRelatorio()"
+    (limparTudoClick)="formularioPrecos?.limparTudo()"
+    (configuracoesClick)="abrirModalConfiguracoes()"
+  ></app-header>
 
-  <main class="max-w-4xl mx-auto px-4 py-6">
+  <main class="mx-auto md:max-w-4xl md:px-4 py-6">
     <section *ngIf="telaAtual === 'formulario'" class="animate-fade-in">
-      <app-formulario-precos (relatorioGerado)="onRelatorioGerado($event)">
+      <app-formulario-precos
+        #formularioPrecos
+        (relatorioGerado)="onRelatorioGerado($event)"
+      >
       </app-formulario-precos>
     </section>
 
@@ -20,4 +30,9 @@
   </main>
   <app-loading [visivel]="carregando" [mensagem]="mensagemCarregamento">
   </app-loading>
+
+  <!-- Modal de Configurações -->
+  @if (mostrarConfiguracoes) {
+    <app-configuracoes-categorias (fecharModal)="fecharModalConfiguracoes()"></app-configuracoes-categorias>
+  }
 </div>

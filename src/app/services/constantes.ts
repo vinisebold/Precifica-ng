@@ -22,6 +22,7 @@ export interface Produto {
 })
 export class ConstantesService {
   public readonly CHAVE_ARMAZENAMENTO = 'dados-lista-precos';
+  public readonly CHAVE_CONFIGURACOES_CATEGORIAS = 'configuracoes-categorias'; // Nova chave
   public readonly NOME_APLICACAO = 'Lista de Preços';
   public readonly VERSAO = '1.0.0';
 

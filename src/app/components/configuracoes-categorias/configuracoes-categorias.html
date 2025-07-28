@@ -1,0 +1,31 @@
+<div class="modal-overlay">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2>Configurações de Categorias</h2>
+      <button class="close-button" (click)="onFecharModal()">X</button>
+    </div>
+    <div class="modal-body">
+      <!-- Conteúdo da lista de categorias arrastáveis e toggles de visibilidade -->
+      <div cdkDropList (cdkDropListDropped)="drop($event)" class="category-list">
+        @for (categoria of categoriasConfig; track categoria.nome) {
+        <div class="category-item" cdkDrag>
+          <div class="drag-handle" cdkDragHandle>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span>{{ categoria.nome }}</span>
+          <label class="toggle-switch">
+            <input type="checkbox" [checked]="categoria.visivel" (change)="toggleVisibilidade(categoria)">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        }
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="button save-button" (click)="onSalvarConfiguracoes()">Salvar</button>
+      <button class="button cancel-button" (click)="onFecharModal()">Cancelar</button>
+    </div>
+  </div>
+</div>

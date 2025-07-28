@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -10,9 +10,22 @@ import { CommonModule } from '@angular/common';
 })
 export class HeaderComponent {
   @Input() descricao: string = 'Preencha os preços e gere seu relatório';
+  @Input() gerarRelatorioDisabled: boolean = true;
+  @Input() mostrarBotoesAcao: boolean = false;
+
+  @Output() gerarRelatorioClick = new EventEmitter<void>();
+  @Output() limparTudoClick = new EventEmitter<void>();
+  @Output() configuracoesClick = new EventEmitter<void>();
 
   public abrirConfiguracoes(): void {
-    alert('Abrir configurações de regras de negócio (a implementar).');
-    // Exemplo: this.router.navigate(['/configuracoes']);
+    this.configuracoesClick.emit();
+  }
+
+  public onGerarRelatorio(): void {
+    this.gerarRelatorioClick.emit();
+  }
+
+  public onLimparTudo(): void {
+    this.limparTudoClick.emit();
   }
 }

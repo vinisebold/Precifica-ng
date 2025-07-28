@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormularioPrecos } from './components/formulario-precos/formulario-precos';
 import { VisualizadorRelatorio } from './components/visualizador-relatorio/visualizador-relatorio';
 import { Loading } from './components/loading/loading';
 import { HeaderComponent } from './components/header/header';
+import { ConfiguracoesCategoriasComponent } from './components/configuracoes-categorias/configuracoes-categorias';
 import { RelatorioService } from './services/relatorio';
 import { Relatorio } from './models/relatorio';
 
@@ -17,15 +18,20 @@ type TelasApp = 'formulario' | 'relatorio';
     VisualizadorRelatorio,
     Loading,
     HeaderComponent,
+    // Import do novo componente de configurações
+    ConfiguracoesCategoriasComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App {
+  @ViewChild('formularioPrecos') formularioPrecos?: FormularioPrecos;
+
   public telaAtual: TelasApp = 'formulario';
   public relatorioAtual: Relatorio | null = null;
   public carregando: boolean = false;
   public mensagemCarregamento: string = 'Processando...';
+  public mostrarConfiguracoes: boolean = false; // Nova propriedade para o modal de configurações
 
   constructor(private relatorioService: RelatorioService) {}
 
@@ -37,12 +43,30 @@ export class App {
   }
 
   /**
+   * Abre o modal de configurações
+   */
+  public abrirModalConfiguracoes(): void {
+    this.mostrarConfiguracoes = true;
+  }
+
+  /**
+   * Fecha o modal de configurações
+   */
+  public fecharModalConfiguracoes(): void {
+    console.log('App: fecharModalConfiguracoes chamado.');
+    this.mostrarConfiguracoes = false;
+    // Forçar a atualização do formulário de preços se necessário
+    // this.formularioPrecos?.carregarConfiguracoesCategorias(); // Se não for automático via Subject
+  }
+
+  /**
    * Manipula a geração do relatório
    */
   public async onRelatorioGerado(dados: {
     titulo: string;
     precos: { [key: string]: number };
   }): Promise<void> {
+    console.log('App: onRelatorioGerado chamado.');
     try {
       this.mostrarCarregamento('Gerando relatório...');
       await this.delay(543);
