@@ -1,7 +1,11 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ConstantesService } from '../../services/constantes';
+import {
+  ConstantesService,
+  Categoria,
+  Produto,
+} from '../../services/constantes';
 import { ArmazenamentoService } from '../../services/armazenamento';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -21,6 +25,7 @@ export class FormularioPrecos implements OnInit {
 
   public tituloRelatorio: string = '';
   public precos: { [nomeProduto: string]: number } = {};
+  public categoriaAberta: Categoria | null = null;
 
   private salvarDados$ = new Subject<void>();
 
@@ -32,6 +37,27 @@ export class FormularioPrecos implements OnInit {
   ngOnInit(): void {
     this.carregarDadosSalvos();
     this.configurarAutoSave();
+    this.categoriaAberta = this.constantes.CATEGORIAS[0] || null;
+  }
+
+  public get produtosPorCategoria(): { [key in Categoria]: Produto[] } {
+    return this.constantes.PRODUTOS.reduce((acc, produto) => {
+      acc[produto.categoria] = acc[produto.categoria] || [];
+      acc[produto.categoria].push(produto);
+      return acc;
+    }, {} as { [key in Categoria]: Produto[] });
+  }
+
+  public gerarIdCategoria(categoria: Categoria): string {
+    return categoria
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]/g, '');
+  }
+
+  public toggleCategoria(categoria: Categoria): void {
+    this.categoriaAberta =
+      this.categoriaAberta === categoria ? null : categoria;
   }
 
   private configurarAutoSave(): void {
@@ -81,6 +107,7 @@ export class FormularioPrecos implements OnInit {
       this.tituloRelatorio = '';
       this.precos = {};
       this.armazenamento.limpar();
+      this.categoriaAberta = this.constantes.CATEGORIAS[0] || null;
     }
   }
 }

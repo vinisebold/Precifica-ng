@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Relatorio } from '../models/relatorio';
 import { RelatorioService } from './relatorio';
-import { ConstantesService } from './constantes';
+import { ConstantesService, Categoria, Produto } from './constantes';
 
 @Injectable({
   providedIn: 'root',
@@ -51,7 +51,7 @@ export class CompartilhamentoService {
   }
 
   /**
-   * Gera texto do relatório com base na ordem de ConstantesService.PRODUTOS
+   * Gera texto do relatório com produtos agrupados por categoria, seguindo a ordem de ConstantesService.PRODUTOS
    */
   private gerarTextoRelatorio(relatorio: Relatorio): string {
     let texto = `${relatorio.titulo}\n${this.relatorioService.formatarData(
@@ -62,12 +62,36 @@ export class CompartilhamentoService {
       relatorio.produtos.map((p) => [p.nome, p])
     );
 
-    for (const nomeProduto of this.constantesService.PRODUTOS) {
-      const produto = produtosRelatorio.get(nomeProduto);
-      if (produto) {
-        texto += `${produto.nome}: ${this.relatorioService.formatarPreco(
-          produto.preco
-        )}\n`;
+    const produtosPorCategoria: { [key in Categoria]: Produto[] } =
+      this.constantesService.PRODUTOS.reduce((acc, produto) => {
+        acc[produto.categoria] = acc[produto.categoria] || [];
+        acc[produto.categoria].push(produto);
+        return acc;
+      }, {} as { [key in Categoria]: Produto[] });
+
+    const categoriasOrdenadas: Categoria[] = [
+      Categoria.Frutas,
+      Categoria.Verduras,
+      Categoria.Legumes,
+      Categoria.RaizesETuberculos,
+      Categoria.CebolasEAlhos,
+      Categoria.TemperosEErvas,
+      Categoria.ProdutosProcessadosEEmbalados,
+    ];
+
+    for (const categoria of categoriasOrdenadas) {
+      const produtos = produtosPorCategoria[categoria];
+      if (produtos && produtos.length > 0) {
+        texto += `${categoria}:\n`;
+        for (const produto of produtos) {
+          const produtoRelatorio = produtosRelatorio.get(produto.nome);
+          if (produtoRelatorio) {
+            texto += `  ${produtoRelatorio.nome}: ${this.relatorioService.formatarPreco(
+              produtoRelatorio.preco
+            )}\n`;
+          }
+        }
+        texto += '\n';
       }
     }
 

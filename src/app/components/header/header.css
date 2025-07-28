@@ -1,0 +1,11 @@
+.sticky {
+  position: sticky;
+}
+@media (max-width: 640px) {
+  .text-xl {
+    font-size: 1.125rem;
+  }
+  .text-sm {
+    font-size: 0.875rem;
+  }
+}

@@ -10,20 +10,32 @@
         </p>
       </div>
 
-      <div class="space-y-4">
-        @for (produto of produtosFiltrados; track produto.nome) {
-        <div
-          class="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100"
-        >
-          <span
-            class="flex-1 text-base font-normal text-gray-800 pr-4 tracking-wide"
-            >{{ produto.nome }}</span
-          >
-          <div class="flex items-center space-x-2">
-            <span class="text-gray-500 text-base">R$</span>
-            <span class="text-xl font-medium text-gray-700">{{
-              relatorioService.formatarPreco(produto.preco).replace("R$ ", "")
-            }}</span>
+      <div class="space-y-6">
+        @for (categoria of produtosPorCategoria | keyvalue; track categoria.key)
+        {
+        <div>
+          <h3 class="text-base font-medium text-gray-600 mb-3 tracking-wide">
+            {{ categoria.key }}
+          </h3>
+          <div class="space-y-4">
+            @for (produto of categoria.value; track produto.nome) {
+            <div
+              class="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100"
+            >
+              <span
+                class="flex-1 text-base font-normal text-gray-800 pr-4 tracking-wide"
+                >{{ produto.nome }}</span
+              >
+              <div class="flex items-center space-x-2">
+                <span class="text-gray-500 text-base">R$</span>
+                <span class="text-xl font-medium text-gray-700">{{
+                  relatorioService
+                    .formatarPreco(produto.preco)
+                    .replace("R$ ", "")
+                }}</span>
+              </div>
+            </div>
+            }
           </div>
         </div>
         }

@@ -3,7 +3,11 @@ import { CommonModule } from '@angular/common';
 import { Relatorio, ProdutoComPreco } from '../../models/relatorio';
 import { RelatorioService } from '../../services/relatorio';
 import { CompartilhamentoService } from '../../services/compartilhamento';
-import { ConstantesService } from '../../services/constantes';
+import {
+  ConstantesService,
+  Categoria,
+  Produto,
+} from '../../services/constantes';
 
 @Component({
   selector: 'app-visualizador-relatorio',
@@ -27,15 +31,15 @@ export class VisualizadorRelatorio {
    * Ordena os produtos do relatório atual com base na ordem definida em ConstantesService.PRODUTOS.
    * Produtos que estão no relatório mas não na lista de constantes são adicionados ao final.
    */
-  get produtosFiltrados(): ProdutoComPreco[] {
+  private get produtosFiltrados(): ProdutoComPreco[] {
     const produtosDoRelatorio = new Map(
       this.relatorio.produtos.map((p) => [p.nome, p])
     );
     const produtosOrdenados: ProdutoComPreco[] = [];
 
-    for (const nomeProduto of this.constantesService.PRODUTOS) {
-      if (produtosDoRelatorio.has(nomeProduto)) {
-        produtosOrdenados.push(produtosDoRelatorio.get(nomeProduto)!);
+    for (const produto of this.constantesService.PRODUTOS) {
+      if (produtosDoRelatorio.has(produto.nome)) {
+        produtosOrdenados.push(produtosDoRelatorio.get(produto.nome)!);
       }
     }
 
@@ -47,6 +51,23 @@ export class VisualizadorRelatorio {
     }
 
     return produtosOrdenados;
+  }
+
+  /**
+   * Agrupa os produtos filtrados por categoria para exibição no template.
+   */
+  public get produtosPorCategoria(): { [key in Categoria]: ProdutoComPreco[] } {
+    return this.produtosFiltrados.reduce((acc, produto) => {
+      const produtoConstante = this.constantesService.PRODUTOS.find(
+        (p) => p.nome === produto.nome
+      );
+      const categoria = produtoConstante
+        ? produtoConstante.categoria
+        : Categoria.ProdutosProcessadosEEmbalados;
+      acc[categoria] = acc[categoria] || [];
+      acc[categoria].push(produto);
+      return acc;
+    }, {} as { [key in Categoria]: ProdutoComPreco[] });
   }
 
   public async compartilhar(): Promise<void> {

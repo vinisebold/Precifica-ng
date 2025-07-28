@@ -1,0 +1,16 @@
+/* formulario-precos.css */
+.sticky {
+  position: sticky;
+}
+.scroll-mt-20 {
+  scroll-margin-top: 5rem; /* Ajusta o deslocamento ao rolar para âncoras */
+}
+@media (max-width: 640px) {
+  .text-base {
+    font-size: 0.875rem; /* Reduz tamanho da fonte em telas pequenas */
+  }
+  .px-3 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem; /* Ajusta padding dos botões */
+  }
+}

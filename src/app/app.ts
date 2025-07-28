@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormularioPrecos } from './components/formulario-precos/formulario-precos';
 import { VisualizadorRelatorio } from './components/visualizador-relatorio/visualizador-relatorio';
 import { Loading } from './components/loading/loading';
+import { HeaderComponent } from './components/header/header';
 import { RelatorioService } from './services/relatorio';
 import { Relatorio } from './models/relatorio';
 
@@ -10,7 +11,13 @@ type TelasApp = 'formulario' | 'relatorio';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, FormularioPrecos, VisualizadorRelatorio, Loading],
+  imports: [
+    CommonModule,
+    FormularioPrecos,
+    VisualizadorRelatorio,
+    Loading,
+    HeaderComponent,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -19,10 +26,15 @@ export class App {
   public relatorioAtual: Relatorio | null = null;
   public carregando: boolean = false;
   public mensagemCarregamento: string = 'Processando...';
-  // REMOVIDO: A propriedade 'categoriasSelecionadas' não é mais necessária.
-  // public categoriasSelecionadas: { [categoria: string]: boolean } = {};
 
   constructor(private relatorioService: RelatorioService) {}
+
+  // Descrição dinâmica para o header
+  public get descricaoHeader(): string {
+    return this.telaAtual === 'formulario'
+      ? 'Preencha os preços e gere seu relatório'
+      : 'Visualize e compartilhe seu relatório';
+  }
 
   /**
    * Manipula a geração do relatório
@@ -33,9 +45,7 @@ export class App {
   }): Promise<void> {
     try {
       this.mostrarCarregamento('Gerando relatório...');
-
-      // Simula tempo de processamento
-      await this.delay(800);
+      await this.delay(543);
 
       const relatorio = this.relatorioService.gerarRelatorio(
         dados.titulo,
@@ -68,11 +78,6 @@ export class App {
     this.relatorioAtual = null;
   }
 
-  // REMOVIDO: O método 'onCategoriasSelecionadasChange' não é mais utilizado.
-  // public onCategoriasSelecionadasChange(categorias: { [categoria: string]: boolean }) {
-  //   this.categoriasSelecionadas = { ...categorias };
-  // }
-
   /**
    * Mostra o indicador de carregamento
    */
@@ -92,7 +97,6 @@ export class App {
    * Mostra um alerta para o usuário
    */
   private mostrarAlerta(mensagem: string): void {
-    // NOTA: Em uma aplicação real, seria melhor usar um componente de modal/toast.
     alert(mensagem);
   }
 
