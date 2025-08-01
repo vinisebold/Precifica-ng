@@ -8,6 +8,18 @@ import { ConfiguracoesCategoriasComponent } from './components/configuracoes-cat
 import { RelatorioService } from './services/relatorio';
 import { Relatorio } from './models/relatorio';
 
+// Angular Material Imports
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatRippleModule } from '@angular/material/core';
+
 type TelasApp = 'formulario' | 'relatorio';
 
 @Component({
@@ -18,8 +30,18 @@ type TelasApp = 'formulario' | 'relatorio';
     VisualizadorRelatorio,
     Loading,
     HeaderComponent,
-    // Import do novo componente de configurações
     ConfiguracoesCategoriasComponent,
+    // Angular Material Modules
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatInputModule,
+    MatTabsModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    MatRippleModule,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',

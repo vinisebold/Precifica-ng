@@ -1,103 +1,65 @@
-<div class="animate-fade-in bg-slate-50 min-h-screen p-4 sm:p-6 lg:p-8">
-  <div class="max-w-5xl mx-auto">
-    <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 text-slate-800">
-      <div class="text-center mb-8">
-        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+<div class="p-4 md:p-6 mx-auto max-w-4xl">
+  <mat-card class="mat-elevation-z2 print:shadow-none print:p-0">
+    <mat-card-content>
+      <!-- Cabeçalho do Relatório -->
+      <div class="mb-6 text-center">
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">
           {{ relatorio.titulo }}
-        </h2>
-        <p class="text-slate-500">
-          {{ relatorioService.formatarData(relatorio.data) }}
+        </h1>
+        <p class="text-sm text-gray-500">
+          {{ relatorio.data | date: 'dd/MM/yyyy' }}
         </p>
       </div>
 
+      <!-- Conteúdo do Relatório -->
       <div class="space-y-6">
-        @for (categoria of produtosPorCategoria | keyvalue; track categoria.key)
-        {
-        <div>
-          <h3 class="text-base font-medium text-gray-600 mb-3 tracking-wide">
-            {{ categoria.key }}
-          </h3>
-          <div class="space-y-4">
-            @for (produto of categoria.value; track produto.nome) {
-            <div
-              class="flex items-center justify-between p-4 bg-gray-50/50 rounded-lg border border-gray-100"
-            >
-              <span
-                class="flex-1 text-base font-normal text-gray-800 pr-4 tracking-wide"
-                >{{ produto.nome }}</span
-              >
-              <div class="flex items-center space-x-2">
-                <span class="text-gray-500 text-base">R$</span>
-                <span class="text-xl font-medium text-gray-700">{{
-                  relatorioService
-                    .formatarPreco(produto.preco)
-                    .replace("R$ ", "")
-                }}</span>
+        @for (categoria of produtosPorCategoria | keyvalue; track categoria.key) {
+        <mat-card class="mat-elevation-z0">
+          <mat-card-header>
+            <mat-card-title class="text-xl text-gray-800">{{ categoria.key }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="pt-4">
+            <mat-divider class="mb-4"></mat-divider>
+            <div class="space-y-3">
+              @for (produto of categoria.value; track produto.nome) {
+              <div class="flex justify-between items-center py-2">
+                <span class="text-gray-700">{{ produto.nome }}</span>
+                <span class="font-medium text-gray-900">
+                  R$ {{ relatorioService.formatarPreco(produto.preco).replace("R$ ", "") }}
+                </span>
               </div>
+              }
             </div>
-            }
-          </div>
-        </div>
+          </mat-card-content>
+        </mat-card>
         }
       </div>
-    </div>
 
-    <div class="flex flex-col sm:flex-row gap-4 mt-8">
-      <button
-        (click)="compartilhar()"
-        [disabled]="compartilhando"
-        class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600 flex items-center justify-center"
-      >
-        @if (!compartilhando) {
-        <span class="flex items-center">
-          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              d="M13 4.5a2.5 2.5 0 11.702 4.281l-4.243 2.121a2.503 2.503 0 010 2.196l4.243 2.121a2.5 2.5 0 11-.702.702l-4.243-2.121a2.5 2.5 0 110-3.6l4.243-2.121A2.5 2.5 0 0113 4.5z"
-            ></path>
-          </svg>
-          Compartilhar
-        </span>
-        } @else {
-        <span class="flex items-center">
-          <svg class="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24">
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            ></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          Compartilhando...
-        </span>
-        }
-      </button>
-
-      <button
-        (click)="voltar()"
-        class="flex-1 bg-transparent hover:bg-slate-100 text-slate-600 font-bold py-3 px-6 rounded-lg border border-slate-300 transition-all duration-200 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600 flex items-center justify-center"
-      >
-        <svg
-          class="w-5 h-5 mr-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+      <!-- Botões de Ação -->
+      <div class="mt-8 flex justify-center gap-4">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="compartilhar()"
+          [disabled]="compartilhando"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M10 19l-7-7m0 0l7-7m-7 7h18"
-          ></path>
-        </svg>
-        Voltar
-      </button>
-    </div>
-  </div>
+          <mat-icon>share</mat-icon>
+          <span class="ml-2">
+            @if (!compartilhando) {
+              Compartilhar
+            } @else {
+              Compartilhando...
+            }
+          </span>
+        </button>
+        <button
+          mat-stroked-button
+          (click)="voltar()"
+        >
+          <mat-icon>arrow_back</mat-icon>
+          <span class="ml-2">Voltar</span>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>

@@ -11,10 +11,29 @@ import { CategoriaConfig } from '../configuracoes-categorias/configuracoes-categ
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @Component({
   selector: 'app-formulario-precos',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    ReactiveFormsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatTabsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule
+  ],
   templateUrl: './formulario-precos.html',
   styleUrl: './formulario-precos.css',
 })
@@ -75,6 +94,21 @@ export class FormularioPrecos implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     // Garantir que a tab selecionada inicialmente receba foco
     this.focarTabSelecionada();
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const categoriaNav = document.querySelector('.categoria-nav') as HTMLElement;
+    if (categoriaNav) {
+      const titleCard = document.querySelector('mat-card') as HTMLElement;
+      const titleBottom = titleCard ? titleCard.getBoundingClientRect().bottom : 0;
+      
+      if (titleBottom <= 64) { // 64px é a altura do header
+        categoriaNav.classList.add('is-sticky');
+      } else {
+        categoriaNav.classList.remove('is-sticky');
+      }
+    }
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -141,6 +175,18 @@ export class FormularioPrecos implements OnInit, AfterViewInit, OnDestroy {
 
   public selecionarCategoria(categoria: Categoria): void {
     this.categoriaSelecionada = categoria;
+  }
+
+  getCategoriaSelecionadaIndex(): number {
+    if (!this.categoriaSelecionada) return 0;
+    const index = this.categoriasExibicao.indexOf(this.categoriaSelecionada);
+    return index >= 0 ? index : 0;
+  }
+
+  onTabChange(index: number): void {
+    if (index >= 0 && index < this.categoriasExibicao.length) {
+      this.selecionarCategoria(this.categoriasExibicao[index]);
+    }
   }
 
   private carregarConfiguracoesCategorias(): void {

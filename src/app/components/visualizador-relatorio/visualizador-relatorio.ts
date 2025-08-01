@@ -1,5 +1,10 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Relatorio, ProdutoComPreco } from '../../models/relatorio';
 import { RelatorioService } from '../../services/relatorio';
 import { CompartilhamentoService } from '../../services/compartilhamento';
@@ -11,9 +16,17 @@ import {
 
 @Component({
   selector: 'app-visualizador-relatorio',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDividerModule,
+    MatTooltipModule
+  ],
   templateUrl: './visualizador-relatorio.html',
-  styleUrl: './visualizador-relatorio.css',
+  styleUrls: ['./visualizador-relatorio.css'],
 })
 export class VisualizadorRelatorio {
   @Input() relatorio!: Relatorio;

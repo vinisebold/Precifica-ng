@@ -3,6 +3,25 @@
   position: sticky;
 }
 
+.sticky-top {
+  position: sticky !important;
+  top: 64px !important;
+  z-index: 900 !important;
+}
+
+.categoria-nav {
+  position: sticky;
+  top: 64px;
+  z-index: 900;
+  background-color: white;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Classe para aplicar quando a barra está fixa */
+.categoria-nav.is-sticky {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
 nav[role="tablist"] {
   border-bottom: 1px solid #e5e7eb; /* cor border-gray-200 */
   overflow-x: auto; /* Permite scroll horizontal para muitas tabs */
@@ -29,6 +48,23 @@ nav[role="tablist"] button {
 
 nav[role="tablist"] button[aria-selected="true"] {
   border-color: #3b82f6; /* cor blue-600 */
+}
+
+/* Estilos para o campo de preço */
+input[type="number"] {
+  -moz-appearance: textfield; /* Remove as setas em Firefox */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 640px) {

@@ -1,82 +1,48 @@
-<header
-  class="bg-white sticky top-0 z-20 h-16 flex items-center border-b border-gray-100"
->
-  <div
-    class="mx-auto w-full md:max-w-4xl px-4 flex items-center justify-between"
-  >
-    <h1 class="text-lg font-bold text-gray-800">
-      {{ descricao }}
-    </h1>
-    <div class="flex items-center gap-x-2">
+<mat-toolbar color="primary" class="mat-elevation-z0 sticky-top backdrop-blur-md bg-opacity-90">
+  <div class="container mx-auto px-4 py-1 flex items-center justify-between w-full">
+    <h1 class="text-lg md:text-xl font-medium truncate">{{ descricao }}</h1>
+    
+    <div class="flex items-center gap-2">
       <!-- Botões de Ação -->
-      <div *ngIf="mostrarBotoesAcao" class="flex items-center gap-x-2">
-        <button
-          (click)="onLimparTudo()"
-          class="text-gray-500 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 rounded-full p-2"
-          title="Limpar Tudo"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
+      <ng-container *ngIf="mostrarBotoesAcao">
+        <!-- Botão Gerar Relatório (responsivo) -->
+        <button 
+          mat-flat-button 
+          [class.mat-flat-button]="(innerWidth > 640)"
+          [class.mat-mini-fab]="(innerWidth <= 640)"
+          color="accent" 
+          (click)="onGerarRelatorio()" 
+          [disabled]="gerarRelatorioDisabled" 
+          matTooltip="Gerar Relatório"
+          class="rounded-full items-center gap-1 px-4 py-1"
+          [ngClass]="{'sm:flex hidden': innerWidth > 640, 'mat-elevation-z0': innerWidth <= 640}">
+          <mat-icon [class.text-sm]="innerWidth > 640">description</mat-icon>
+          <span class="font-medium" *ngIf="innerWidth > 640">Gerar Relatório</span>
         </button>
-        <button
-          (click)="onGerarRelatorio()"
-          [disabled]="gerarRelatorioDisabled"
-          class="text-gray-500 hover:text-blue-500 disabled:text-gray-300 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-full p-2"
-          title="Gerar Relatório"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
-          </svg>
+        
+        <!-- Botão Limpar Tudo (responsivo) -->
+        <button 
+          [class.mat-stroked-button]="(innerWidth > 640)"
+          [class.mat-icon-button]="(innerWidth <= 640)"
+          color="basic" 
+          (click)="onLimparTudo()" 
+          matTooltip="Limpar Tudo"
+          class="items-center"
+          [ngClass]="{'rounded-full px-3 flex gap-1': innerWidth > 640}">
+          <mat-icon [class.text-sm]="innerWidth > 640" class="flex-shrink-0 flex items-center justify-center">delete_outline</mat-icon>
+          <span class="text-sm flex items-center" *ngIf="innerWidth > 640">Limpar</span>
         </button>
-      </div>
+      </ng-container>
 
       <!-- Botão de Configurações -->
-      <button
-        (click)="abrirConfiguracoes()"
-        class="text-gray-500 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-full p-2"
-        title="Configurar regras de negócio"
-      >
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-          />
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-        </svg>
+      <button 
+        mat-icon-button 
+        color="basic" 
+        (click)="abrirConfiguracoes()" 
+        matTooltip="Configurações"
+        class="ml-1">
+        <mat-icon>settings</mat-icon>
       </button>
     </div>
   </div>
-</header>
+</mat-toolbar>

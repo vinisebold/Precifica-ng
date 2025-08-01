@@ -1,1 +1,28 @@
-/* O conteúdo foi movido para as classes do Tailwind no arquivo HTML. */
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.mat-toolbar {
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+}
+
+/* Ajustes para dispositivos móveis */
+@media (max-width: 599px) {
+  .mat-toolbar {
+    height: auto;
+    min-height: 56px;
+    padding: 8px 0;
+  }
+  
+  h1 {
+    font-size: 1rem;
+    max-width: 200px;
+  }
+}
